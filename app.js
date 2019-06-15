@@ -15,8 +15,11 @@ let posts = [];
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
+//Using the internal files. All internal files are in public folder
 app.use(express.static("public"));
 
+//Home page will contain all the starting content and the short version of
+//all posts
 app.get("/", function(req,res) {
   res.render("home",{
     startingContent: homeStartingContent,
@@ -25,6 +28,7 @@ app.get("/", function(req,res) {
 
 });
 
+//Contact contains the contact info of creator
 app.get("/contact", function(req,res) {
   res.render("contact",{
     startingContent: contactContent
@@ -37,24 +41,29 @@ app.get("/about", function(req,res) {
   });
 });
 
+//Compose takes user to where they can create a new post
 app.get("/compose", function(req,res) {
   res.render("compose",{
-    //startingContent: aboutContent
+
   });
 });
 
+//After users click Post, send the info back to process the request
 app.post("/compose", function(req,res) {
   const post = {
     title: req.body.titleBox,
     content: req.body.postBox
   };
 
+  //save all post in an array and redirect them to home page
   posts.push(post);
   res.redirect("/");
 });
 
+//set up separate page for each post
 app.get("/posts/:post", function(req,res) {
   posts.forEach(function(post) {
+    //using lodash to remove - and turn them into lowercase
     if(_.lowerCase(req.params.post) === _.lowerCase(post.title)) {
       res.render("post",{
         postTitle: post.title,
